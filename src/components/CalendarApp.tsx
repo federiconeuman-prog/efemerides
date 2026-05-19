@@ -455,10 +455,13 @@ export default function CalendarApp() {
 
                     <div className="grid grid-cols-2 gap-4 mt-2">
                         {selectedEvent.tematicas && (
-                            <div className="space-y-2">
-                                <h4 className="text-[9px] lg:text-[10px] font-bold text-gray-500 tracking-widest flex items-center gap-1.5 uppercase">
-                                    <Tag size={12} className="shrink-0" /> <span>Temáticas</span>
-                                </h4>
+                            <div className="flex flex-col gap-2">
+                                <div className="h-9 flex items-end">
+                                    <h4 className="text-[9px] lg:text-[10px] font-bold text-gray-500 tracking-widest flex items-start gap-1.5 uppercase mb-0.5">
+                                        <Tag size={12} className="shrink-0 mt-[2px]" /> 
+                                        <span className="leading-snug">Temáticas</span>
+                                    </h4>
+                                </div>
                                 <div className="flex flex-col gap-2">
                                     {selectedEvent.tematicas.split(';').map((t, i) => {
                                         const trimmed = t.trim();
@@ -474,10 +477,13 @@ export default function CalendarApp() {
                         )}
                         
                         {selectedEvent.areas && (
-                            <div className="space-y-2">
-                                <h4 className="text-[9px] lg:text-[10px] font-bold text-gray-500 tracking-widest flex items-center gap-1.5 uppercase">
-                                    <BookOpen size={12} className="shrink-0" /> <span>Áreas Curriculares</span>
-                                </h4>
+                            <div className="flex flex-col gap-2">
+                                <div className="h-9 flex items-end">
+                                    <h4 className="text-[9px] lg:text-[10px] font-bold text-gray-500 tracking-widest flex items-start gap-1.5 uppercase mb-0.5">
+                                        <BookOpen size={12} className="shrink-0 mt-[2px]" /> 
+                                        <span className="leading-snug">Áreas Curriculares</span>
+                                    </h4>
+                                </div>
                                 <div className="flex flex-col gap-2">
                                     {selectedEvent.areas.split(';').map((t, i) => {
                                         const trimmed = t.trim();
@@ -1085,11 +1091,8 @@ export default function CalendarApp() {
       </div>
 
       <footer className="w-full bg-white border-t border-gray-200 py-4 mt-auto shrink-0 relative z-10 shadow-sm">
-          <div className="text-center text-xs text-gray-500 flex flex-col gap-1">
-              <span>Calendario de efemérides educativo desarrollado por NEO - Newsletter Escuela ORT</span>
-              <a href="https://campus.ort.edu.ar/neo" target="_blank" rel="noopener noreferrer" className="text-[var(--color-brand-blue)] hover:underline font-bold flex items-center justify-center gap-1">
-                  <span>www.campus.ort.edu.ar/neo</span>
-              </a>
+          <div className="text-center text-xs text-gray-500">
+              <span>Calendario de efemérides educativo desarrollado por <a href="https://campus.ort.edu.ar/neo" target="_blank" rel="noopener noreferrer" className="text-[var(--color-brand-blue)] hover:underline font-bold">NEO - Newsletter Escuela ORT</a></span>
           </div>
       </footer>
     </div>

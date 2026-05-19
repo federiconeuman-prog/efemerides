@@ -1,8 +1,6 @@
 {
-  "name": "Remix: Calendario educativo de efemérides",
-  "description": "Calendario educativo de efemérides con apoyo de efemérides judías y recursos pedagógicos.",
+  "name": "",
+  "description": "",
   "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": []
 }
