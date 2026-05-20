@@ -113,7 +113,7 @@ function MonthYearPicker({
                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 group-hover:text-[var(--color-brand-blue)] transition-colors">
                     {viewMode === 'months' ? 'Toca para elegir año' : 'Volver a meses'}
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 cursor-pointer transition-transform active:scale-95">
                     <div className="text-4xl font-bold text-[var(--color-brand-dark)] tracking-tight tabular-nums group-hover:text-[var(--color-brand-blue)] transition-colors font-display">
                         {viewYear}
                     </div>
@@ -388,8 +388,11 @@ export default function CalendarApp() {
     const overrideImage = selectedEvent.imagenUrl;
 
     return (
-        <div className="flex flex-col gap-4 h-full">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative flex flex-col animate-in fade-in slide-in-from-right-4 md:slide-in-from-right-4 duration-300 flex-1 min-h-0">
+        <div className={cn("flex flex-col gap-4 min-h-0", isMobile ? "h-auto" : "h-full")}>
+            <div className={cn(
+                "bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative flex flex-col animate-in fade-in duration-300",
+                isMobile ? "h-auto" : "flex-1 min-h-0"
+            )}>
                 <div className="absolute top-4 left-4 z-10 flex gap-2">
                     {viewMode === 'calendar' && dayEventsForDate.length > 1 && (
                         <button 
@@ -438,7 +441,10 @@ export default function CalendarApp() {
                     </div>
                 </div>
                 
-                <div className={cn("pt-8 p-6 flex flex-col gap-5 flex-1", showAllNeo ? "overflow-y-auto" : "overflow-hidden")}>
+                <div className={cn(
+                    "pt-8 px-6 pb-12 flex flex-col gap-5",
+                    isMobile ? "flex-none" : "flex-1 overflow-y-auto min-h-0 custom-scrollbar"
+                )}>
                     <div className="space-y-2">
                         <h3 className="text-2xl font-bold text-[var(--color-brand-dark)] leading-tight font-display">
                             {selectedEvent.nombre}
@@ -812,7 +818,7 @@ export default function CalendarApp() {
                                         handlePrevMonth();
                                     }
                                 }}
-                                className="flex flex-col w-full flex-1 min-h-0 cursor-grab active:cursor-grabbing"
+                                className="flex flex-col w-full flex-1 min-h-0"
                             >
                                 {/* Days of week header */}
                                 <div className="grid grid-cols-7 border-b border-gray-200 bg-[#f8f9fa]">
@@ -863,7 +869,7 @@ export default function CalendarApp() {
                                                 className={cn(
                                                     "bg-white min-h-[52px] md:min-h-[85px] lg:min-h-[96px] p-1 md:p-2 flex flex-col gap-0.5 md:gap-1 transition-colors relative group",
                                                     isToday && "bg-amber-50/10",
-                                                    dayEvents.length > 0 && "cursor-pointer"
+                                                    dayEvents.length > 0 && "cursor-pointer active:scale-[0.98] transition-transform"
                                                 )}
                                             >
                                                 {isSelectedDay && <div className="absolute inset-0 border-2 border-[#fdc600] z-20 pointer-events-none" />}
@@ -1041,7 +1047,7 @@ export default function CalendarApp() {
                 </div>
 
                 {/* Referencias Footer */}
-                <div className="bg-[#f8f9fa] border-t border-gray-200 py-3 md:py-4 px-2 md:px-6 flex flex-row items-center justify-center gap-3 md:gap-8 overflow-hidden">
+                                            <div className="bg-[#f8f9fa] border-t border-gray-200 py-3 md:py-4 px-2 md:px-6 flex flex-row items-center justify-center gap-3 md:gap-8 overflow-hidden select-none">
                     <span className="hidden sm:block text-[9px] md:text-[11px] font-bold text-[#4a4c5f] tracking-widest uppercase shrink-0 font-display">REFERENCIAS:</span>
                     
                     <div className="flex flex-row flex-nowrap items-center justify-center gap-2.5 md:gap-12 text-[10px] md:text-sm font-medium text-[#4a4c5f] shrink-0">
@@ -1105,7 +1111,7 @@ function ResourcesList({ resourcesList, additionalEnlace, eventId }: { resources
     const listRef = React.useRef<HTMLDivElement>(null);
     const topRef = React.useRef<HTMLHeadingElement>(null);
 
-    const COLLAPSED_HEIGHT = 160;
+    const COLLAPSED_HEIGHT = 120;
 
     // Reset expansion when switching events
     React.useEffect(() => {
@@ -1115,20 +1121,30 @@ function ResourcesList({ resourcesList, additionalEnlace, eventId }: { resources
     React.useEffect(() => {
         const checkOverflow = () => {
             if (listRef.current) {
+                // Use offsetHeight or scrollHeight depending on expanded state
+                // When collapsed, scrollHeight tells us how big it WOULD be
                 const { scrollHeight } = listRef.current;
                 setIsOverflowing(scrollHeight > COLLAPSED_HEIGHT);
             }
         };
 
+        // Run once
         checkOverflow();
-        const timer = setTimeout(checkOverflow, 100);
+        
+        // Small delay to let images/layout settle
+        const timer = setTimeout(checkOverflow, 150);
+        
+        // Use ResizeObserver for more reliable updates
+        const observer = new ResizeObserver(checkOverflow);
+        if (listRef.current) observer.observe(listRef.current);
         
         window.addEventListener('resize', checkOverflow);
         return () => {
             window.removeEventListener('resize', checkOverflow);
             clearTimeout(timer);
+            observer.disconnect();
         };
-    }, [resourcesList, additionalEnlace]);
+    }, [resourcesList, additionalEnlace, eventId]);
 
     const handleToggle = (expand: boolean) => {
         setShowAllNeo(expand);
@@ -1147,12 +1163,10 @@ function ResourcesList({ resourcesList, additionalEnlace, eventId }: { resources
                 ref={listRef}
                 className={cn(
                     "flex flex-col gap-2 relative transition-all duration-300 ease-in-out", 
-                    showAllNeo ? "max-h-[1000px] overflow-y-auto" : "max-h-[160px] overflow-hidden",
+                    showAllNeo ? "h-auto" : "max-h-[120px] overflow-hidden",
                     !showAllNeo && isOverflowing && "pb-4"
                 )}
-                style={{
-                    maxHeight: showAllNeo ? '1000px' : (`${COLLAPSED_HEIGHT}px`)
-                }}
+                style={!showAllNeo ? { maxHeight: `${COLLAPSED_HEIGHT}px` } : {}}
             >
                 {resourcesList.map((res, idx) => (
                     <a 
